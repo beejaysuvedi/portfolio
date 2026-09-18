@@ -281,8 +281,30 @@
         return;
       }
 
-      alert('Thank you for your message! (This form is a UI placeholder — connect a backend to send emails.)');
-      contactForm.reset();
+      var submitBtn = contactForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      fetch('https://formspree.io/f/xoevqgjw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, subject: subject, message: message })
+      })
+        .then(function (response) {
+          if (response.ok) {
+            alert('Thank you for your message! I will get back to you soon.');
+            contactForm.reset();
+          } else {
+            alert('Something went wrong. Please try again later.');
+          }
+        })
+        .catch(function () {
+          alert('Something went wrong. Please try again later.');
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Send Message <span class="btn-arrow">&rarr;</span>';
+        });
     });
   }
 
